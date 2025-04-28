@@ -1,5 +1,6 @@
 export const applicationFormData = {
     appTitle: "Kaleidoscope",
+    loginPageTitle:'Login',
     carTypeTitle: 'Essay about Cars *',
     otherTypeTitle: 'Provide an essay about any topic *',
     animalTypeTitle: 'Essay about Animals *',

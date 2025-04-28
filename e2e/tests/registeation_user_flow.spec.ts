@@ -1,9 +1,11 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { registrationPage } from '../pages/registrationPage';
 import { captureCurrentUrl, randomString, shortDelay, validatePageTitle } from '../utils/common_helper';
 import { applicationFormData, pageTitles } from '../fixture/test-data';
+import { loginPage } from '../pages/loginPage';
 
 const email = randomString();
+let applicationCardId: string | null = null;
 
 test.describe('User registration and login flow',()=>{
     test('User Registration', async ({ page }) => {
@@ -45,9 +47,25 @@ test.describe('User registration and login flow',()=>{
         await rp.clickandAssertApplicationEssay()
         await rp.clickApplicationSubmitBtn()
         await rp.asserApplicationStatusOnHomePage()
+        const id = await rp.getApplicationId();
+        applicationCardId = id ? id : '';   
         await page.goto(applicationURL)
         await rp.assertreviewPageTitle()
         await rp.assertEditOption()
        });
+
+    test('User Login',async({page})=>{
+        const lp = new loginPage(page)
+        await lp.navigateToBaseUrl()
+        await lp.enterSingupedEmail(email)
+        await lp.clickNextBtn()
+        await lp.enterPassword(applicationFormData.password)
+        await lp.clickSignInBtn()
+        await lp.asserApplicationStatusOnHomePage()
+        const id = await lp.getApplicationId();
+        expect(id).toEqual(applicationCardId)
+     })
+
+
 })
 
