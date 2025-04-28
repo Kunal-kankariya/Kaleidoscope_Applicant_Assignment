@@ -6,17 +6,19 @@ import { loginPage } from '../pages/loginPage';
 
 let email: string;
 let applicationCardId: string | null = null;
+let registeredEmail = ''
 
 test.describe('User registration and login flow',()=>{
     test.beforeAll(async () => {
         email = randomString();
       });
-      
+
     test('User Registration', async ({ page }) => {
         const rp = new registrationPage(page)
         await rp.navigateToBaseUrl()
         await rp.clickLoginToApply()
         await rp.enterEmail(email)
+        registeredEmail=email
         await rp.clickNextBtn()
         await validatePageTitle(page, pageTitles.singupPageTitle)
         await rp.enterFirstName(applicationFormData.firstName)
@@ -61,7 +63,7 @@ test.describe('User registration and login flow',()=>{
     test('User Login',async({page})=>{
         const lp = new loginPage(page)
         await lp.navigateToBaseUrl()
-        await lp.enterSingupedEmail(email)
+        await lp.enterSingupedEmail(registeredEmail)
         await lp.clickNextBtn()
         await lp.enterPassword(applicationFormData.password)
         await lp.clickSignInBtn()
