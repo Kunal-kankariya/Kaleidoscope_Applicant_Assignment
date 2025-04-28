@@ -32,3 +32,7 @@ export const validatePageTitle = async(page:Page, text:string)=>{
 export const shortDelay = async(page:Page)=>{
    await page.waitForTimeout(5000)
 }
+
+export const someDelay = async(page:Page)=>{
+   await page.waitForTimeout(10000)
+}

@@ -1,16 +1,24 @@
-import { test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { registrationPage } from '../pages/registrationPage';
-import { captureCurrentUrl, randomString, shortDelay, validatePageTitle } from '../utils/common_helper';
+import { captureCurrentUrl, randomString, shortDelay, someDelay, validatePageTitle } from '../utils/common_helper';
 import { applicationFormData, pageTitles } from '../fixture/test-data';
+import { loginPage } from '../pages/loginLogoutPage'
 
-const email = randomString();
+let email: string;
+let applicationCardId: string | null = null;
+let registeredEmail = ''
 
 test.describe('User registration and login flow',()=>{
+    test.beforeAll(async () => {
+        email = randomString();
+      });
+
     test('User Registration', async ({ page }) => {
         const rp = new registrationPage(page)
         await rp.navigateToBaseUrl()
         await rp.clickLoginToApply()
         await rp.enterEmail(email)
+        registeredEmail=email
         await rp.clickNextBtn()
         await validatePageTitle(page, pageTitles.singupPageTitle)
         await rp.enterFirstName(applicationFormData.firstName)
@@ -45,9 +53,28 @@ test.describe('User registration and login flow',()=>{
         await rp.clickandAssertApplicationEssay()
         await rp.clickApplicationSubmitBtn()
         await rp.asserApplicationStatusOnHomePage()
+        const id = await rp.getApplicationId();
+        applicationCardId = id ? id : '';   
         await page.goto(applicationURL)
         await rp.assertreviewPageTitle()
         await rp.assertEditOption()
+        await page.goBack()
+
+        //logout flow
+        const lp = new loginPage(page)
+        await lp.userLogout()
+        await someDelay(page)
+
+        //login Flow
+        await lp.navigateToBaseUrl()
+        await lp.enterSingupedEmail(registeredEmail)
+        await lp.clickNextBtn()
+        await lp.enterPassword(applicationFormData.password)
+        await lp.clickSignInBtn()
+        await lp.asserApplicationStatusOnHomePage()
+        const idAfterLogin = await lp.getApplicationId();
+        expect(idAfterLogin).toEqual(applicationCardId)
        });
+
 })
 

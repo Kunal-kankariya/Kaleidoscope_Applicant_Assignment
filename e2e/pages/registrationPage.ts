@@ -59,6 +59,8 @@ export class registrationPage {
   schoolEssayTitle: Locator
   applicationCard: Locator
   reviewApplication: Locator
+  captureApplicationCardId: Locator
+
 
   constructor(page: Page) {
     this.page = page;
@@ -116,6 +118,7 @@ export class registrationPage {
     this.schoolEssayTitle = this.page.getByText('Essay about School')
     this.applicationCard = this.page.locator('.application-card')
     this.reviewApplication = this.page.getByText('Review Your Application')
+    this.captureApplicationCardId = this.page.locator('.application-card__daysremaining')
   }
 
   async navigateToBaseUrl() {
@@ -304,6 +307,11 @@ export class registrationPage {
     await expect(this.applicationCard).toHaveCount(1)
     await expect(this.applicationCard).toContainText(applicationFormData.applicationAcceptance)
     logger.info(`Verify Application status`);
+  }
+
+  async getApplicationId(){
+    const getId = await this.captureApplicationCardId.textContent()
+    return getId
   }
 
  async assertEditOption(){
