@@ -10,6 +10,8 @@ export class loginPage {
     }
       page: Page;
       url: string;
+      logoutDropdown: Locator
+      logout:Locator
       emailInput: Locator;
       nextBtn: Locator;
       passwordInput: Locator
@@ -26,6 +28,8 @@ constructor(page:Page){
    this.signInBtn = page.getByRole("button", { name: "Sign In" });
    this.applicationCard = this.page.locator('.application-card')
    this.captureApplicationCardId = this.page.locator('.application-card__daysremaining')
+   this.logoutDropdown = this.page.locator('#account-menu__button')
+   this.logout = this.page.getByText('Log Out')
 }
 
 async navigateToBaseUrl() {
@@ -68,5 +72,10 @@ async enterSingupedEmail(email: string) {
   async getApplicationId(){
     const getId = await this.captureApplicationCardId.textContent()
     return getId
+  }
+  
+  async userLogout(){
+    await this.logoutDropdown.click()
+    await this.logout.click()
   }
 }

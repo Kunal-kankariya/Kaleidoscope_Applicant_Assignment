@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { registrationPage } from '../pages/registrationPage';
-import { captureCurrentUrl, randomString, shortDelay, validatePageTitle } from '../utils/common_helper';
+import { captureCurrentUrl, randomString, shortDelay, someDelay, validatePageTitle } from '../utils/common_helper';
 import { applicationFormData, pageTitles } from '../fixture/test-data';
-import { loginPage } from '../pages/loginPage';
+import { loginPage } from '../pages/loginLogoutPage'
 
 let email: string;
 let applicationCardId: string | null = null;
@@ -58,20 +58,23 @@ test.describe('User registration and login flow',()=>{
         await page.goto(applicationURL)
         await rp.assertreviewPageTitle()
         await rp.assertEditOption()
-       });
+        await page.goBack()
 
-    test('User Login',async({page})=>{
+        //logout flow
         const lp = new loginPage(page)
+        await lp.userLogout()
+        await someDelay(page)
+
+        //login Flow
         await lp.navigateToBaseUrl()
         await lp.enterSingupedEmail(registeredEmail)
         await lp.clickNextBtn()
         await lp.enterPassword(applicationFormData.password)
         await lp.clickSignInBtn()
         await lp.asserApplicationStatusOnHomePage()
-        const id = await lp.getApplicationId();
-        expect(id).toEqual(applicationCardId)
-     })
-
+        const idAfterLogin = await lp.getApplicationId();
+        expect(idAfterLogin).toEqual(applicationCardId)
+       });
 
 })
 
