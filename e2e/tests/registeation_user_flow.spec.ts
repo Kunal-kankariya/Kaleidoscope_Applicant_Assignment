@@ -4,10 +4,14 @@ import { captureCurrentUrl, randomString, shortDelay, validatePageTitle } from '
 import { applicationFormData, pageTitles } from '../fixture/test-data';
 import { loginPage } from '../pages/loginPage';
 
-const email = randomString();
+let email: string;
 let applicationCardId: string | null = null;
 
 test.describe('User registration and login flow',()=>{
+    test.beforeAll(async () => {
+        email = randomString();
+      });
+      
     test('User Registration', async ({ page }) => {
         const rp = new registrationPage(page)
         await rp.navigateToBaseUrl()
